@@ -1,0 +1,63 @@
+.task-cart-container {
+  //position: absolute;
+  //
+  width: 448px;
+  height: 220px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: -10px 10px 15px 0px rgba(179,175,179,0.75);
+  font-size: 16px;
+
+  color: #3c4043;
+
+  .task-cart-header {
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    div {
+      margin: 0 10px;
+    }
+  }
+
+  .task-cart-title-and-date {
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    .date-type {
+      margin-right: 10px;
+    }
+
+    .title-and-date {
+      display: flex;
+      flex-direction: column;
+      .title {
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+      .date {
+
+      }
+    }
+  }
+
+  .task-cart-description {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    .description-type {
+      margin-right: 10px;
+    }
+
+    .description {
+      height: 70px;
+      overflow-y: scroll;
+    }
+  }
+}

@@ -1,0 +1,39 @@
+.calendar-container {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 40px auto;
+  .calendar-header {
+    width: 100%;
+    background-color: lightslategrey;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    justify-content: center;
+    align-content: center;
+    grid-column-gap: 40px;
+    .btn {
+
+    }
+    .pick-week {
+      display: flex;
+      flex-direction: row;
+      .pick-next-week {
+        margin-left:5px;
+        font-size: 18px;
+      }
+      .pick-prev-week {
+        margin-right:5px;
+        font-size: 18px;
+      }
+      .pick-next-week:hover, .pick-prev-week:hover {
+        color: green;
+      }
+    }
+
+    .pick-date {
+
+    }
+  }
+
+  .calendar-body {
+  }
+}
