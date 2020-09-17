@@ -1,15 +1,24 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './task-cart.less'
 import {Task} from "../../../domain/calendar/tasks";
 import {getDayNumberInWeek, months, weekDays} from "../../../commons/calendar/constants";
+import {TaskCartAvailability} from "./tasks-list-in-month-day";
+import {IsModifyTaskCartAvailable} from "../calendar/week";
+import {useHistory, useRouteMatch} from "react-router";
 
 type Props = {
     task: Task,
-    column: number
+    column: number,
+    setIsTaskCartAvailable: (isTaskCartAvailability: TaskCartAvailability) => void,
+    deleteTask: (task: Task) => void,
 }
 
 export const TaskCart = (props: Props) => {
-    const { task, column} = props
+    const { task, column, setIsTaskCartAvailable, deleteTask } = props
+    let { url } = useRouteMatch()
+    const history = useHistory()
+
+    console.log(url)
 
     task.startTime = new Date(task.startTime)
     task.endTime = new Date(task.endTime)
@@ -31,12 +40,32 @@ export const TaskCart = (props: Props) => {
     const endYear = task.endTime.getFullYear()
     const endTime = `${task.endTime.getHours()}:${task.endTime.getMinutes()}`
 
+    const styleTaskCart = {
+        top: 'calc((100% - 220px)/2)',
+        left: 'calc((100% - 448px)/2)'
+    }
+
+    const deleteTaskAndCloseTaskCart = (task: Task) => {
+        deleteTask(task)
+        setIsTaskCartAvailable({
+            isAvailable: false,
+            id: 'none'
+        })
+    }
+
+    const openEditEventPage = () => {
+        history.push(`${url}/eventedit/${task.id}`)
+    }
     return (
-        <div className='task-cart-container'>
+
+        <div className='task-cart-container' style={styleTaskCart}>
             <div className='task-cart-header'>
-                <div>mofidy</div>
-                <div>delete</div>
-                <div>close</div>
+                <div onClick={() => openEditEventPage()}>modify</div>
+                <div onClick={() => deleteTaskAndCloseTaskCart(task)}>delete</div>
+                <div onClick={() => setIsTaskCartAvailable({
+                    isAvailable: false,
+                    id: task.id
+                })}>close</div>
             </div>
             <div className='task-cart-title-and-date'>
                 <div className='date-type'>IMG</div>

@@ -1,15 +1,12 @@
 .week-container {
   display: grid;
-  grid-template-columns: 100px repeat(7, auto);
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  box-sizing: border-box;
+  grid-template-columns: 70px repeat(7, calc((100% - 70px) / 7));;
+
   .time-slots-container {
     .time-slot {
       height: 48px;
-      border-left: 1px solid black;
-      border-bottom: 1px solid black;
-      box-sizing: border-box;
+      border: #dadce0 1px solid;
+      color: #3c4043;
     }
 
 
@@ -18,30 +15,24 @@
     position: relative;
     .day-header {
       height: 48px;
-      border-left: 1px solid black;
-      border-bottom: 1px solid black;
-      box-sizing: border-box;
+      border: #dadce0 1px solid;
+      color: #3c4043;
     }
     .time-slot {
       height: 48px;
-      border-left: 1px solid black;
-      border-bottom: 1px solid black;
-      box-sizing: border-box;
+      border: #dadce0 1px solid;
+      color: #3c4043;
     }
     .task {
+      width: 120px;
+      text-align: center;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      padding: 5px 10px;
       position: absolute;
-      box-shadow: 1px 1px 1px gray;
-      box-sizing: border-box;
       border-radius: 5px;
+      background-color: cornflowerblue;
+      border: 1px solid black;
     }
-    //.test {
-    //  position: absolute;
-    //  background-color: greenyellow;
-    //  height: 100px;
-    //  width: 100px;
-    //  left: 0x;
-    //  top: 96px;
-    //  box-sizing: border-box;
-    //}
   }
 }

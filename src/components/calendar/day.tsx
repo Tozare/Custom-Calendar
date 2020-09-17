@@ -1,24 +1,30 @@
 import React, {useState} from 'react'
 import './day.less'
 import {daysInMonth, getDayNumberInWeek, timeslots, weekDays} from "../../../commons/calendar/constants";
-import {TaskModal} from "./task-modal";
+import {TaskModal} from "../task/task-modal";
 import {StateData, Task, TasksManagement} from "../../../domain/calendar/tasks";
 import {useObservable} from "../../../commons/react-hooks/use-observable";
+import {TaskCart} from "../task/task-cart";
+import {useParams} from "react-router";
 
 type Props = {
     day: number,
     month: number,
-    year: number
+    year: number,
+    tasksData: StateData | undefined,
+    deleteTask: (task: Task) => void,
 }
 
 export const Day = (props: Props) => {
-    const { day, month, year } = props
+    const { day, month, year, tasksData, deleteTask } = props
 
-    const tasksManagement = new TasksManagement()
-    const tasksData = useObservable<StateData | undefined>(tasksManagement.tasksObservable, tasksManagement.stateData)
+    const [isTaskCartAvailable, setIsTaskCartAvailable] = useState({
+        isAvailable: false,
+        id: 'none'
+    })
 
     const date = new Date(year, month, day)
-    const weekDayIndex = date.getDay()
+    const weekDayIndex = getDayNumberInWeek(date)
 
 
     const getDayTasks = (day: number): Task[] => {
@@ -37,20 +43,14 @@ export const Day = (props: Props) => {
         }
     }
 
-
-    const addTask = (task: Task) => {
-        tasksManagement.addTask(task)
-    }
-
     const lengthData: number[] = []
-
 
     return (
         <div className='day-container'>
             {/*{ modalIsOpen && <TaskModal year={year} month={month} day={day}/> }*/}
             <div className='time-slots-container'>
-                <div className='time-slot   '><TaskModal year={year} month={month} day={day} addTask={addTask}/></div>
-                <div className='time-slot   '>Notes: </div>
+                <div className='time-slot'/>
+                <div className='time-slot'>Notes: </div>
                 {timeslots.map( timeslot => <div className='time-slot'>{timeslot}</div>)}
             </div>
             <div className='day'>
@@ -95,17 +95,40 @@ export const Day = (props: Props) => {
                                 }
                             }
 
+                            let zindex = d
+                            if (isTaskCartAvailable.id === task.id && isTaskCartAvailable.isAvailable){
+                                zindex = 1000
+                            }
+
                             const styleObject = {
-                                width: '100px',
                                 height: `${height}px`,
                                 top: `${startPosition}px`,
-                                border: '1px solid black',
                                 left: `${d}px`,
-                                backgroundColor: 'blue',
-                                zIndex: d
+                                zIndex: zindex
                             }
+
                             return (
-                                <div className='task' style={styleObject}>{task.title}</div>
+                                <div>
+                                    <div className='task' style={styleObject} onClick={() => {
+                                        setIsTaskCartAvailable({
+                                            isAvailable: true,
+                                            id: task.id
+                                        })
+                                    }}
+                                    >
+                                        {task.title}
+                                    </div>
+                                    {
+                                        isTaskCartAvailable.isAvailable &&
+                                        task.id === isTaskCartAvailable.id &&
+                                        <TaskCart
+                                            task={task}
+                                            column={1}
+                                            setIsTaskCartAvailable={setIsTaskCartAvailable}
+                                            deleteTask={deleteTask}
+                                        />
+                                    }
+                                </div>
                             )
                         })
                 }

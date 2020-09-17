@@ -1,12 +1,15 @@
 .tasks-list-container {
   height: 100%;
   width: 100%;
-  .task-list {
+  .tasks-list {
 
+    .show-tasks-btn {
+      margin-left: 20px;
+    }
   }
 
   .tasks-list-cart {
-    position: absolute;
+    position: fixed;
     overflow-y: auto;
     left: -5%;
     z-index: 1200;
@@ -18,5 +21,10 @@
     box-shadow: 2px 2px 2px 2px gray;
     padding: 5px;
     border-radius: 6px;
+
+    .close-btn {
+      text-align: center;
+      margin-bottom: 5px;
+    }
   }
 }

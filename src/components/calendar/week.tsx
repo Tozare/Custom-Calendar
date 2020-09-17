@@ -1,21 +1,29 @@
 import React, {useState} from 'react'
 import './week.less'
 import {daysInMonth, getDayNumberInWeek, timeslots, weekDays} from "../../../commons/calendar/constants";
-import {TaskModal} from "./task-modal";
 import {StateData, Task, TasksManagement} from "../../../domain/calendar/tasks";
-import {useObservable} from "../../../commons/react-hooks/use-observable";
+import {TaskCart} from "../task/task-cart";
 
 type Props = {
     day: number,
     month: number,
-    year: number
+    year: number,
+    tasksData: StateData | undefined,
+    deleteTask: (task: Task) => void,
+}
+
+export type IsModifyTaskCartAvailable = {
+    isAvailable: boolean,
+    id: string
 }
 
 export const Week = (props: Props) => {
-    const { day, month, year } = props
+    const { day, month, year, tasksData, deleteTask } = props
 
-    const tasksManagement = new TasksManagement()
-    const tasksData = useObservable<StateData | undefined>(tasksManagement.tasksObservable, tasksManagement.stateData)
+    const [isTaskCartAvailable, setIsTaskCartAvailable] = useState({
+        isAvailable: false,
+        id: 'none'
+    })
 
     const monthDays = daysInMonth(month, year)
     const previousMonthDays = daysInMonth(month-1, year)
@@ -43,7 +51,6 @@ export const Week = (props: Props) => {
         for (let i=1; i<=(6-(monthDays-day+weekDay)); i++){
             weekDates.push(new Date(year, month+1, i))
         }
-        console.log(weekDates)
     } else {
         for (let i=day-weekDay; i<day; i++){
             weekDates.push(new Date(year, month, i))
@@ -53,7 +60,7 @@ export const Week = (props: Props) => {
         }
     }
 
-    const getDayTasks = (day: number): Task[] => {
+    const getDayTasks = (day: number, month: number, year: number): Task[] => {
         if (tasksData && tasksData.tasks){
             return tasksData.tasks.filter(task => {
                 task.startTime = new Date(task.startTime)
@@ -70,16 +77,12 @@ export const Week = (props: Props) => {
     }
 
 
-    const addTask = (task: Task) => {
-        tasksManagement.addTask(task)
-    }
-
     return (
         <div className='week-container'>
             {/*{ modalIsOpen && <TaskModal year={year} month={month} day={day}/> }*/}
             <div className='time-slots-container'>
-                <div className='time-slot   '><TaskModal year={year} month={month} day={day} addTask={addTask}/></div>
-                <div className='time-slot   '>Notes: </div>
+                <div className='time-slot'/>
+                <div className='time-slot'>Notes: </div>
                 {timeslots.map( timeslot => <div className='time-slot'>{timeslot}</div>)}
             </div>
             {weekDates.map((date, index) => {
@@ -98,7 +101,7 @@ export const Week = (props: Props) => {
                         <div className='time-slot'/>
                         {timeslots.map( timeslot => <div className='time-slot'/>)}
                         {
-                            getDayTasks(day)
+                            getDayTasks(day, date.getMonth(), date.getFullYear())
                                 .sort((a,b)=> (a.startTime.getTime()>b.startTime.getTime()) ? 1 : (a.startTime.getTime()===b.startTime.getTime() ? ((a.endTime.getTime()<b.endTime.getTime()) ? 1 : -1) :-1 ))
                                 .map((task, index) => {
                                     const startHour = task.startTime.getHours()
@@ -127,18 +130,41 @@ export const Week = (props: Props) => {
                                             }
                                         }
                                     }
+                                    let zindex = d
+                                    if (isTaskCartAvailable.id === task.id && isTaskCartAvailable.isAvailable){
+                                        zindex = 1000
+                                    }
 
                                     const styleObject = {
-                                        width: '100px',
                                         height: `${height}px`,
                                         top: `${startPosition}px`,
-                                        border: '1px solid black',
                                         left: `${d}px`,
-                                        backgroundColor: 'blue',
-                                        zIndex: d
+                                        zIndex: zindex
                                     }
+
+
                                     return (
-                                        <div className='task' style={styleObject}>{task.title}</div>
+                                        <div>
+                                            <div className='task' style={styleObject} onClick={() => {
+                                                setIsTaskCartAvailable({
+                                                    isAvailable: true,
+                                                    id: task.id
+                                                })
+                                            }}
+                                            >
+                                                {task.title}
+                                            </div>
+                                            {
+                                                isTaskCartAvailable.isAvailable &&
+                                                task.id === isTaskCartAvailable.id &&
+                                                <TaskCart
+                                                    task={task}
+                                                    column={1}
+                                                    setIsTaskCartAvailable={setIsTaskCartAvailable}
+                                                    deleteTask={deleteTask}
+                                                />
+                                            }
+                                        </div>
                                     )
                                 })
                         }

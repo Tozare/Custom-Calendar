@@ -1,50 +1,68 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import './date-input.less'
 import {Month} from "../calendar/month";
 import {months} from "../../../commons/calendar/constants";
 
 type Props = {
-    day: number,
-    month: number,
-    year: number,
-    changeDay: (day: number) => void,
-    changeMonth: (month: number) => void,
-    changeYear: (year: number) => void
+    initialDay: number,
+    initialMonth: number,
+    initialYear: number,
+    pickDate: (day: number, month: number, year: number) => void
 }
 
 export const DateInput = (props: Props) => {
-    const { day, month, year, changeDay, changeMonth, changeYear} = props
+    const { initialDay, initialMonth, initialYear, pickDate } = props
     const [monthIsAvailable, setMonthIsAvailable] = useState(false)
+
+    // const [day, setDay] = useState(initialDay)
+    // const [month, setMonth] = useState(initialMonth)
+    // const [year, setYear] = useState(initialYear)
+
+    let day = initialDay
+    let month = initialMonth
+    let year = initialYear
 
     const nextMonth = () => {
         if (month === 11){
-            changeMonth(1)
-            changeYear(year+1)
+            // setMonth(0)
+            // setYear(year+1)
+            month = 0
+            year = year + 1
         } else {
-            changeMonth(month+1)
+            // setMonth(month + 1)
+            month = month + 1
         }
-        changeDay(1)
     }
 
     const prevMonth = () => {
         if (month === 0){
-            changeMonth(11)
-            changeYear(year-1)
+            // setMonth(11)
+            // setYear(year-1)
+            month = 11
+            year = year - 1
         } else {
-            changeMonth(month-1)
+            // setMonth(month-1)
+            month = month - 1
         }
-        changeDay(1)
     }
 
-    const pickDay = (day: number) => {
-        changeDay(day)
+    const pickDay = (newDay: number) => {
+        // setDay(newDay)
+        day = newDay
+        pickDate(newDay, month, year)
+        setMonthIsAvailable(false)
     }
-
+    const close = () => {
+        setMonthIsAvailable(!monthIsAvailable)
+        // setDay(initialDay)
+        // setMonth(initialMonth)
+        // setYear(initialYear)
+    }
     return (
         <div className='date-picker-container'>
             <div className='date-picker-header'>
                 <div className='selected-date'>{day} / {month} / {year}</div>
-                <div className='select-date' onClick={() => {setMonthIsAvailable(!monthIsAvailable)}}>pick date</div>
+                <div className='select-date' onClick={close}>{'>'}</div>
             </div>
             {
                 monthIsAvailable ?

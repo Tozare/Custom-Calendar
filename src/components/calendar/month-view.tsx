@@ -1,19 +1,32 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './month-view.less'
 import {StateData, Task, TasksManagement} from "../../../domain/calendar/tasks";
 import {useObservable} from "../../../commons/react-hooks/use-observable";
-import {TasksListInMonthDay} from "./tasks-list-in-month-day";
+import {TasksListInMonthDay} from "../task/tasks-list-in-month-day";
+import {getDayNumberInWeek} from "../../../commons/calendar/constants";
 
 type Props = {
     month: number,
-    year: number
+    year: number,
+    day: number,
+    tasksData: StateData | undefined,
+    deleteTask: (task: Task) => void
 }
 
 export const MonthView = (props: Props) => {
-    const { month, year } = props
+    const { month, year, tasksData, deleteTask } = props
 
-    const tasksManagement = new TasksManagement()
-    const tasksData = useObservable<StateData | undefined>(tasksManagement.tasksObservable, tasksManagement.stateData)
+    const [isTaskListAvailable, setIsTaskListAvailable] = useState({
+        isAvailable: false,
+        day: 1,
+        month: month,
+        year: year
+    })
+
+    const [isTaskCartAvailable, setIsTaskCartAvailable] = useState({
+        isAvailable: false,
+        id: 'none'
+    })
 
     const daysInMonth = (month: number, year: number): number => {
         let date = new Date(year, month+1, 0);
@@ -23,14 +36,16 @@ export const MonthView = (props: Props) => {
     const numberOfDays = daysInMonth(month, year)
 
     const emptyDate = new Date(year, month, 0)
-    const emptyDays: number = emptyDate.getDay()
+    const emptyDays: number = getDayNumberInWeek(emptyDate)
 
 
     let countBoxes = 0
     const render = []
-    for (let i=0; i<=emptyDays; i++){
-        render.push(<div className='emptyDay'/>)
-        countBoxes++
+    if (emptyDays !== 6){
+        for (let i=0; i<=emptyDays; i++){
+            render.push(<div className='emptyDay'/>)
+            countBoxes++
+        }
     }
 
     const getDayTasks = (day: number): Task[] => {
@@ -58,19 +73,31 @@ export const MonthView = (props: Props) => {
 
     for (let i=0; i<numberOfDays; i++){
         countBoxes++
-        let row = countBoxes % 7 === 0 ? Math.floor(countBoxes / 7) : Math.floor(countBoxes / 7) + 1
+        const row = countBoxes % 7 === 0 ? Math.floor(countBoxes / 7) : Math.floor(countBoxes / 7) + 1
+        let column = countBoxes % 7  === 0 ? 7 : countBoxes % 7
         const dayTasks = getDayTasks(i+1)
             .sort((a,b)=> (a.startTime.getTime()>b.startTime.getTime()) ? 1 : (a.startTime.getTime()===b.startTime.getTime() ? ((a.endTime.getTime()<b.endTime.getTime()) ? 1 : -1) :-1 ))
         render.push(
             <div className='day'>
                 <div className='day-number'>{i+1}</div>
-                <TasksListInMonthDay tasks={dayTasks} day={i+1} month={month} year={year} rows={rows} row={row} column={1}/>
+                <TasksListInMonthDay
+                    tasks={dayTasks}
+                    day={i+1}
+                    month={month}
+                    year={year}
+                    rows={rows} row={row} column={column}
+                    isTasksListAvailable={isTaskListAvailable}
+                    setIsTasksListCartAvailable={setIsTaskListAvailable}
+                    isTaskCartAvailable={isTaskCartAvailable}
+                    setIsTaskCartAvailable={setIsTaskCartAvailable}
+                    deleteTask={deleteTask}
+                />
             </div>
         )
     }
 
     const lastDate = new Date(year, month+1, 1);
-    const lastDay = lastDate.getDay()
+    const lastDay = getDayNumberInWeek(lastDate)
     if (lastDay!=0){
         for (let i=lastDay; i<=6; i++){
             render.push(<div className='emptyDay'/>)
@@ -83,13 +110,10 @@ export const MonthView = (props: Props) => {
     }
     if (countBoxes == 42){
         styleMonthBody = {
-            gridTemplateRows: '16.67% 16.67% 16.67% 16.67% 16.67%'
+            gridTemplateRows: 'repeat(6, calc(100%/6))'
         }
     }
 
-    const addTask = (task: Task) => {
-        tasksManagement.addTask(task)
-    }
 
     return (
         <div className='month-calendar-type-container'>

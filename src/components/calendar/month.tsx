@@ -41,7 +41,7 @@ export const Month = (props: Props) => {
     return (
         <div className='month-container'>
             <div className='dayTitle'>Mn</div>
-            <div className='dayTitle'>Ts</div>
+            <div className='dayTitle'>Tue</div>
             <div className='dayTitle'>Wed</div>
             <div className='dayTitle'>Thr</div>
             <div className='dayTitle'>Fr</div>

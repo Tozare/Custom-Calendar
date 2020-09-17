@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import './task-modal.less'
-import { DropdownInput } from './dropdown-input'
-import { TimeInput } from './time-input'
 
 type Props = {
     year: number,
@@ -16,6 +14,7 @@ import { daysInMonth, years } from '../../../commons/calendar/constants'
 import {Task, TasksManagement} from "../../../domain/calendar/tasks";
 import {useObservable} from "../../../commons/react-hooks/use-observable";
 import {DateInput} from "../test-components/date-input";
+import {MonoTypeOperatorFunction} from "rxjs";
 
 export const TaskModal = (props: Props) => {
     const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -39,16 +38,10 @@ export const TaskModal = (props: Props) => {
 
     const days = daysInMonth(year, month)
 
-    const changeStartYear = (year: number) => {
-        setStartYear(year)
-    }
-
-    const changeStartMonth = (month: number) => {
-        setStartMonth(month)
-    }
-
-    const changeStartDay = (day: number) => {
+    const pickStartDate = (day: number, month: number, year: number) => {
         setStartDay(day)
+        setStartMonth(month)
+        setStartYear(year)
     }
 
     const changeStartHour = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,17 +61,11 @@ export const TaskModal = (props: Props) => {
             setStartMinute(0)
         }
     }
-    ///////////
-    const changeEndYear = (year: number) => {
-        setEndYear(year)
-    }
 
-    const changeEndMonth = (month: number) => {
-        setEndMonth(month)
-    }
-
-    const changeEndDay = (day: number) => {
+    const pickEndDate = (day: number, month: number, year: number) => {
         setEndDay(day)
+        setEndMonth(month)
+        setEndYear(year)
     }
 
     const changeEndHour = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +118,7 @@ export const TaskModal = (props: Props) => {
 
     return (
         <div className='modal-container'>
-            <a className='btn' onClick={() => setModalIsOpen(!modalIsOpen)}>Add task</a>
+            <div className='add_btn' onClick={() => setModalIsOpen(!modalIsOpen)}>Add task</div>
             {
                 modalIsOpen &&
                 <div className='modal'>
@@ -144,23 +131,23 @@ export const TaskModal = (props: Props) => {
                     <div className='time-input-container'>
                         <div className='time-input'>
                             <div className='time-input-label'>Start time:</div>
-                            <DateInput day={startDay}
-                                       month={startMonth}
-                                       year={startYear}
-                                       changeDay={changeStartDay}
-                                       changeMonth={changeStartMonth}
-                                       changeYear={changeStartYear}/>
+                            <DateInput
+                                initialDay={startDay}
+                                initialMonth={startMonth}
+                                initialYear={startYear}
+                                pickDate={pickStartDate}
+                            />
                             <input value={startHour} onChange={changeStartHour}/>
                             <input value={startMinute} onChange={changeStartMinute}/>
                         </div>
                         <div className='time-input'>
                             <div className='time-input-label'>End time:</div>
-                            <DateInput day={endDay}
-                                       month={endMonth}
-                                       year={endYear}
-                                       changeDay={changeEndDay}
-                                       changeMonth={changeEndMonth}
-                                       changeYear={changeEndYear}/>
+                            <DateInput
+                                initialDay={endDay}
+                                initialMonth={endMonth}
+                                initialYear={endYear}
+                                pickDate={pickEndDate}
+                            />
                             <input value={endHour} onChange={changeEndHour}/>
                             <input value={endMinute} onChange={changeEndMinute}/>
                         </div>

@@ -1,30 +1,44 @@
 .date-picker-container {
   display: flex;
   flex-direction: column;
-  width: 250px;
   height: auto;
   position: relative;
   .date-picker-header {
     display: flex;
     flex-direction: row;
-    height: 20px;
-    font-size: 15px;
+    font-family: 'Google Sans',Roboto,Arial,sans-serif;
+    font-size: 14px;
+    padding: 7px 13px;
+    border-radius: 5px;
+    font-weight: 500;
+    border: #dadce0 1px solid;
+    letter-spacing: 0.3px;
+    color: #3c4043;
+
     .selected-date {
     }
     .select-date {
-      margin-left: 20px;
+      margin-left: 5px;
+      transform: rotate(90deg);
     }
   }
 
   .date-picker-body {
-    background-color: azure;
     position: absolute;
-    top: 15px;
-    z-index: 501;
+    top: 30px;
+    left: -50px;
+    z-index: 2000;
     height: auto;
     width: 250px;
     display: flex;
     flex-direction: column;
+
+    background-color: #fff;
+    padding: 0 14px 16px 19px;
+    border: #dadce0 1px solid;
+    border-radius: 5px;
+    box-shadow: -10px 10px 15px 0px rgba(179,175,179,0.75);
+
     .pick-month {
       display: flex;
       flex-direction: row;

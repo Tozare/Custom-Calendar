@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import './list-input.less'
+import {Link, useHistory, useParams} from "react-router-dom";
 
 type Props = {
     pickItem: (item: string) => void,
@@ -10,6 +11,10 @@ type Props = {
 
 export const ListInput = (props: Props) => {
 
+    let { yearParam, monthParam, dayParam } = useParams();
+    console.log(useParams())
+    const history = useHistory()
+
     const {items, pickItem, pickedItem} = props
 
     const [isItemListAvailable, setIsItemListAvailable] = useState(false)
@@ -17,6 +22,7 @@ export const ListInput = (props: Props) => {
     const pick = (item: string) => {
         pickItem(item)
         setIsItemListAvailable(false)
+        history.push(`/${item}/${yearParam}/${monthParam}/${dayParam}`)
     }
 
     return (
@@ -25,7 +31,11 @@ export const ListInput = (props: Props) => {
             {
                 isItemListAvailable &&
                 <div className='list-items'>
-                    {items.map(item => <div className='item' onClick={() => pick(item)}>{item}</div>)}
+                    {items.map(item =>
+                        <div className='item' onClick={() => pick(item)}>
+                            {item}
+                        </div>
+                    )}
                 </div>
             }
         </div>

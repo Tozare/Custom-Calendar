@@ -3,29 +3,33 @@
   height: 100%;
   display: grid;
   grid-template-rows: 20px auto;
-  position: relative;
+  //position: relative;
   .month-calendar-type-header {
     display: grid;
-    grid-template-columns: repeat(7, 14%);
+    grid-template-columns: repeat(7, calc(100% / 7));
+    border: #dadce0 1px solid;
+    color: #3c4043;
   }
 
   .month-calendar-type-body {
     height: 100%;
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(7, 14%);
+    grid-template-columns: repeat(7, calc(100% / 7));
     position: relative;
     z-index: 1000;
     .emptyDay {
       background-color: gray;
-      border: 1px solid black;
+      border: #dadce0 1px solid;
     }
     .day-title {
       height: 20px;
+      color: #3c4043;
     }
     .day {
-      position: relative;
-      border: 1px solid black;
+      //position: relative;
+      border: #dadce0 1px solid;
+      color: #3c4043;
       .day-number {}
     }
   }
